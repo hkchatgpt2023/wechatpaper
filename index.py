@@ -25,7 +25,7 @@ def main():
 		for p in os.listdir(rootdir):
 			if os.path.isdir(os.path.join(rootdir,p)) and not p.startswith("."):
 				logger.info(p)
-				file_name = p+"_file_list.md"
+				file_name = p+"_数据列表.md"
 				with open(file_name, "w") as f:
 					word_docs = get_files(os.path.join(rootdir,p))
 					md_links = [f"- [{os.path.basename(path)}]({os.path.dirname(path)})" for path in word_docs]
