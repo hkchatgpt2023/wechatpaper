@@ -1,37 +1,37 @@
 #!-*- coding:utf-8 -*-
 import os
+from loguru import  logger
+
+def get_files(rootdir):
+	word_docs = []
+	if os.path.isdir(rootdir):
+		logger.info(rootdir)
+		for p in os.listdir(rootdir):
+			if os.path.isdir(os.path.join(rootdir,p)):
+				w= get_files(os.path.join(rootdir,p))
+				if w:
+					word_docs.extend(w)
+			else:
+				if p.endswith(".docx") or p.endswith(".doc"):
+					word_path = os.path.join(rootdir, p)
+					word_docs.append(word_path)
+	return word_docs
+
 
 def main():
-	word_docs = []
-	doc_folders = []
-	rootdir = os.getcwd()
-	print(rootdir)
-	with open('file_list.md', 'w') as f:
-		for file in os.listdir(rootdir):
-			print(file)
-		# for subdir, dirs, files in os.walk(rootdir):
-		# 	print(dirs)
-		# 	for file in files:
-		# 		if file.endswith(",docx") or file.endswith(".doc"):
-		# 			print(file)
-		# 			# 将匹配到的Word文档添加到列表中，同时保留该文档所在的目录路径。
-		# 			word_path = os.path.join(subdir, file)
-		# 			word_docs.append(word_path)
-		#
-		# 		# 为每个单独存在于目录结构层级中的唯一相对路径创建一个保存List.
-		# 		folder_rel_path = os.path.relpath(subdir, rootdir)
-		# 		if folder_rel_path not in doc_folders:
-		# 			doc_folders.append(folder_rel_path)
-		# print(word_docs)
-		# # 将所有路径转换成Markdown链接格式，包括每个相对路径或 "folder"
-		# md_links_and_folders = [f"- [{os.path.basename(path)}]({path}) (in `{folder}`)"
-		# 						for path in word_docs
-		# 						for folder in [next(
-		# 		(f for f in doc_folders if f == os.path.relpath(os.path.dirname(path), rootdir)), 'Folder Not Found')]]
-		# # 在文件中写入每个Markdown链接，以换行符分隔它们。
-		# print(md_links_and_folders)
-		# f.write('\n'.join(md_links_and_folders))
-		# print("okay")
+	rootdir = "./"
+	logger.info(rootdir)
+	if os.path.isdir(rootdir):
+		for p in os.listdir(rootdir):
+			if os.path.isdir(os.path.join(rootdir,p)) and not p.startswith("."):
+				logger.info(p)
+				file_name = p+"_file_list.md"
+				with open(file_name, "w") as f:
+					word_docs = get_files(os.path.join(rootdir,p))
+					md_links = [f"- [{os.path.basename(path)}]({os.path.dirname(path)})" for path in word_docs]
+					f.write('\n'.join(md_links))
+
+
 
 if __name__ == '__main__':
 	main()
